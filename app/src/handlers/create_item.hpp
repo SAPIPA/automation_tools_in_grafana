@@ -24,4 +24,4 @@ class CreateItemHandler final
   ItemStorage& storage_;
 };
 
-}  // namespace app
+}

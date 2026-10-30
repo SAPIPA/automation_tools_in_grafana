@@ -27,4 +27,4 @@ class UpdateItemHandler final
   ItemStorage& storage_;
 };
 
-}  // namespace app
+}

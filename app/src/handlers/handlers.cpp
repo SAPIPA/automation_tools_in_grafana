@@ -1,15 +1,20 @@
 #include "handlers.hpp"
 
-#include "../monitoring/handler_registry.hpp"
-
 #include <string>
 #include <utility>
 
+#include <userver/components/component_context.hpp>
 #include <userver/formats/common/type.hpp>
 #include <userver/formats/json.hpp>
 #include <userver/http/content_type.hpp>
 
 namespace app {
+
+HandlersHandler::HandlersHandler(
+    const userver::components::ComponentConfig& config,
+    const userver::components::ComponentContext& context)
+    : HttpHandlerBase(config, context),
+      metrics_(context.FindComponent<LatencyMetrics>()) {}
 
 std::string HandlersHandler::HandleRequestThrow(
     const userver::server::http::HttpRequest& request,
@@ -21,7 +26,7 @@ std::string HandlersHandler::HandleRequestThrow(
 
   json::ValueBuilder handlers(userver::formats::common::Type::kArray);
 
-  for (const auto& info : kHandlers) {
+  for (const auto& info : metrics_.GetHandlers()) {
     json::ValueBuilder handler;
 
     handler["name"] = std::string(info.name);
@@ -37,4 +42,4 @@ std::string HandlersHandler::HandleRequestThrow(
   return json::ToString(result.ExtractValue());
 }
 
-}  // namespace app
+}

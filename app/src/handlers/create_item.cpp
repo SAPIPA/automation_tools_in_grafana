@@ -57,4 +57,4 @@ std::string CreateItemHandler::HandleRequestThrow(
   return json::ToString(result.ExtractValue()) + "\n";
 }
 
-}  // namespace app
+}

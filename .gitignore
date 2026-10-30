@@ -1,7 +1,3 @@
-
-# ==========================================
-# Environment variables and secrets
-# ==========================================
 .env
 .env.*
 !.env.example
@@ -10,9 +6,6 @@
 *.key
 secrets/
 
-# ==========================================
-# C++ / CMake / userver
-# ==========================================
 build/
 build-*/
 cmake-build-*/
@@ -26,37 +19,26 @@ compile_commands.json
 core
 core.*
 
-# Local CMake and Make settings
 CMakeUserPresets.json
 Makefile.local
 
-# ==========================================
-# IDE
-# ==========================================
 .idea/
 .vscode/.cache/
 .vscode/compile_commands.json
 .vscode/ipch/
 
-# ==========================================
-# Python (userver tooling)
-# ==========================================
 __pycache__/
 .pytest_cache/
 *.py[cod]
 .venv/
 
-# ==========================================
-# Go
-# ==========================================
 *.test
 *.out
 coverage/
 coverage.out
+/dashboard-generator/dashboard-generator
+/load-generator/load-generator
 
-# ==========================================
-# Logs and temporary files
-# ==========================================
 *.log
 *.tmp
 *.swp
@@ -64,8 +46,7 @@ coverage.out
 .DS_Store
 Thumbs.db
 
-# ==========================================
-# Local runtime data
-# ==========================================
 grafana-data/
 prometheus-data/
+.vscode/
+.cache/

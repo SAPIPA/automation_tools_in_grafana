@@ -76,4 +76,4 @@ std::string UpdateItemHandler::HandleRequestThrow(
   return json::ToString(result.ExtractValue()) + "\n";
 }
 
-}  // namespace app
+}

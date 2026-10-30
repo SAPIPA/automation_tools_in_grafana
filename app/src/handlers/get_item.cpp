@@ -2,6 +2,8 @@
 
 #include <charconv>
 #include <cstdint>
+#include <cstdlib>
+#include <stdexcept>
 #include <string_view>
 #include <system_error>
 
@@ -38,6 +40,14 @@ std::string GetItemHandler::HandleRequestThrow(
     return R"({"error":"Invalid item ID"})";
   }
 
+  if (id == 0 && request.GetArg("simulate_error") == "1") {
+    const char* enabled = std::getenv("ENABLE_TEST_ERRORS");
+
+    if (enabled != nullptr && std::string_view{enabled} == "1") {
+      throw std::runtime_error("Simulated internal error for load testing");
+    }
+  }
+
   const auto item = storage_.Get(id);
 
   if (!item.has_value()) {
@@ -52,4 +62,4 @@ std::string GetItemHandler::HandleRequestThrow(
   return json::ToString(result.ExtractValue()) + "\n";
 }
 
-}  // namespace app
+}

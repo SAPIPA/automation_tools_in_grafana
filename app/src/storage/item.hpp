@@ -10,4 +10,4 @@ struct Item {
   std::string name;
 };
 
-}  // namespace app
+}

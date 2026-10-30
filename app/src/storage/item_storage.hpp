@@ -34,4 +34,4 @@ class ItemStorage final : public userver::components::ComponentBase {
   userver::concurrent::Variable<StorageData> data_;
 };
 
-}  // namespace app
+}

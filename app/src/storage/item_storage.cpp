@@ -40,4 +40,4 @@ std::optional<Item> ItemStorage::Update(std::uint64_t id, std::string name) {
   return it->second;
 }
 
-}  // namespace app
+}

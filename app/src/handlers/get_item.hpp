@@ -26,4 +26,4 @@ class GetItemHandler final : public userver::server::handlers::HttpHandlerBase {
   ItemStorage& storage_;
 };
 
-}  // namespace app
+}

@@ -1,77 +1,22 @@
-cmake_minimum_required(VERSION 3.12...3.31)
-project(app CXX)
+cmake_minimum_required(VERSION 3.20)
+project(app LANGUAGES CXX)
 
-list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
-include(DownloadUserver)
-
-find_package(
-    userver
-    COMPONENTS core #
-    QUIET
-)
-if(NOT userver_FOUND)
-    # Tries TRY_DIR first, falls back to downloading userver from GitHub using CPM.
-    download_userver(TRY_DIR third_party/userver)
-endif()
-
+find_package(userver REQUIRED COMPONENTS core)
 userver_setup_environment()
 
-# Common sources
-include_directories(src)
-
-add_library(
-    ${PROJECT_NAME}_objs OBJECT
-    src/handlers/greeting.cpp #
-    src/handlers/hello.cpp #
+add_executable(app
+    src/handlers/main.cpp
     src/handlers/health.cpp
-    src/storage/item_storage.cpp
     src/handlers/create_item.cpp
     src/handlers/get_item.cpp
     src/handlers/update_item.cpp
-    src/monitoring/latency_metrics.cpp
     src/handlers/handlers.cpp
+    src/storage/item_storage.cpp
+    src/monitoring/latency_metrics.cpp
 )
-target_link_libraries(
-    ${PROJECT_NAME}_objs
-    PUBLIC userver::core #
-)
+target_include_directories(app PRIVATE src)
+target_link_libraries(app PRIVATE userver::core)
 
-
-# The Service
-add_executable(${PROJECT_NAME} src/handlers/main.cpp)
-target_link_libraries(${PROJECT_NAME} PRIVATE ${PROJECT_NAME}_objs)
-
-# Unit Tests
-add_executable(${PROJECT_NAME}_unittest src/handlers/greeting_test.cpp)
-target_link_libraries(${PROJECT_NAME}_unittest PRIVATE ${PROJECT_NAME}_objs userver::utest)
-add_google_tests(${PROJECT_NAME}_unittest)
-
-# Benchmarks
-add_executable(${PROJECT_NAME}_benchmark src/handlers/greeting_benchmark.cpp)
-target_link_libraries(${PROJECT_NAME}_benchmark PRIVATE ${PROJECT_NAME}_objs userver::ubench)
-add_google_benchmark_tests(${PROJECT_NAME}_benchmark)
-
-# Functional testing
-userver_testsuite_add_simple()
-
-# Install
-include(GNUInstallDirs)
-
-if(DEFINED ENV{PREFIX})
-    message(STATUS "Set install prefix: $ENV{PREFIX}")
-    file(TO_CMAKE_PATH "$ENV{PREFIX}" PREFIX_PATH)
-    set(CMAKE_INSTALL_PREFIX "${PREFIX_PATH}")
+if(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/tests/conftest.py")
+    userver_testsuite_add_simple()
 endif()
-
-file(GLOB CONFIGS_FILES ${CMAKE_CURRENT_SOURCE_DIR}/configs/*.yaml ${CMAKE_CURRENT_SOURCE_DIR}/configs/*.json)
-
-install(
-    TARGETS ${PROJECT_NAME}
-    DESTINATION ${CMAKE_INSTALL_BINDIR}
-    COMPONENT ${PROJECT_NAME}
-)
-install(
-    FILES ${CONFIGS_FILES}
-    DESTINATION ${CMAKE_INSTALL_SYSCONFDIR}/${PROJECT_NAME}
-    COMPONENT ${PROJECT_NAME}
-)

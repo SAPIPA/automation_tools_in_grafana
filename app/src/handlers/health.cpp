@@ -8,4 +8,4 @@ std::string HealthHandler::HandleRequestThrow(
   return "OK\n";
 }
 
-}  // namespace app
+}

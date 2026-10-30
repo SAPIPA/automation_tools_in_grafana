@@ -15,4 +15,4 @@ class HealthHandler final : public userver::server::handlers::HttpHandlerBase {
       userver::server::request::RequestContext&) const override;
 };
 
-}  // namespace app
+}
