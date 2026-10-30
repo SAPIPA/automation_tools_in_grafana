@@ -1,0 +1,58 @@
+x-userver-base: &userver-base
+  image: task1-userver:v1
+  build:
+    context: ./app
+    dockerfile: Dockerfile
+  restart: unless-stopped
+  healthcheck:
+    test:
+      - CMD
+      - curl
+      - -fsS
+      - http://127.0.0.1:8080/health
+    interval: 5s
+    timeout: 3s
+    retries: 10
+    start_period: 10s
+
+services:
+  app-1:
+    <<: *userver-base
+    environment:
+      POD_ID: ${POD_1_ID}
+      DATACENTER: ${DATACENTER_1}
+    ports:
+      - "8080:8080"
+      - "8081:8081"
+
+  app-2:
+    <<: *userver-base
+    environment:
+      POD_ID: ${POD_2_ID}
+      DATACENTER: ${DATACENTER_2}
+    ports:
+      - "8082:8080"
+      - "8083:8081"
+
+  
+  prometheus:
+    image: prom/prometheus:v3.15.1
+    restart: unless-stopped
+
+    volumes:
+      - ./prometheus/prometheus.yml:/etc/prometheus/prometheus.yml:ro
+      - prometheus-data:/prometheus
+
+    command:
+      - --config.file=/etc/prometheus/prometheus.yml
+      - --storage.tsdb.path=/prometheus
+      - --storage.tsdb.retention.time=7d
+
+    ports:
+      - "9090:9090"
+
+    depends_on:
+      app-1:
+        condition: service_healthy
+      app-2:
+        condition: service_healthy

@@ -28,6 +28,8 @@ add_library(
     src/handlers/create_item.cpp
     src/handlers/get_item.cpp
     src/handlers/update_item.cpp
+    src/monitoring/latency_metrics.cpp
+    src/handlers/handlers.cpp
 )
 target_link_libraries(
     ${PROJECT_NAME}_objs
